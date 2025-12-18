@@ -1,0 +1,25 @@
+.home-categories {
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.home-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.home-category img {
+  border-radius: 12px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.home-category:hover img {
+  transform: scale(1.05);
+}
+
+.home-category h3 {
+  margin-top: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
