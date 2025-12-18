@@ -32,6 +32,62 @@ class Pc_HomeCategories extends Module implements WidgetInterface
         return parent::uninstall();
     }
 
+    public function getContent()
+    {
+        if (Tools::isSubmit('submitAddconfiguration')) {
+            Configuration::updateValue(
+                'HOME_CATEGORIES_CUSTOM_CSS',
+                Tools::getValue('HOME_CATEGORIES_CUSTOM_CSS'),
+                true // allow HTML / CSS
+            );
+
+            return $this->displayConfirmation($this->l('Settings updated'));
+        }
+
+        return $this->renderForm();
+    }
+
+    protected function renderForm()
+    {
+        $fieldsForm = [
+            'form' => [
+                'legend' => [
+                    'title' => $this->l('Settings'),
+                    'icon'  => 'icon-cogs',
+                ],
+                'input' => [
+                    [
+                        'type'  => 'textarea',
+                        'label' => $this->l('Custom CSS'),
+                        'name'  => 'HOME_CATEGORIES_CUSTOM_CSS',
+                        'desc'  => $this->l('Custom CSS injected on the home page'),
+                        'rows'  => 10,
+                        'cols'  => 60,
+                        'class' => 'fixed-width-xxl',
+                    ],
+                ],
+                'submit' => [
+                    'title' => $this->l('Save'),
+                ],
+            ],
+        ];
+
+        $helper = new HelperForm();
+        $helper->module = $this;
+        $helper->name_controller = $this->name;
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
+        $helper->currentIndex = AdminController::$currentIndex . '&configure=' . $this->name;
+        $helper->default_form_language = (int) Configuration::get('PS_LANG_DEFAULT');
+        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG');
+
+        $helper->fields_value = [
+            'HOME_CATEGORIES_CUSTOM_CSS' =>
+            Configuration::get('HOME_CATEGORIES_CUSTOM_CSS'),
+        ];
+
+        return $helper->generateForm([$fieldsForm]);
+    }
+
     public function hookActionFrontControllerSetMedia()
     {
         $this->context->controller->registerStylesheet(
@@ -78,6 +134,7 @@ class Pc_HomeCategories extends Module implements WidgetInterface
 
         return [
             'home_categories' => $categories,
+            'custom_css' => Configuration::get('HOME_CATEGORIES_CUSTOM_CSS'),
         ];
     }
 }
